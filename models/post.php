@@ -14,7 +14,7 @@
 
 		public static function all() {
 			$list = [];
-			$db = Database::getInstance();
+			$db = Database::getConnection();
 			$req = $db->query('SELECT * FROM posts');
 
 			// we create a list of Post objects from the database results
@@ -25,7 +25,7 @@
 		}
 		
 		public static function find($id) {
-			$conn = Database::getInstance();
+			$conn = Database::getConnection();
 			// we make sure $id is an integer
 			$id = intval($id);
 			$sql = "SELECT * FROM food WHERE id = ?";
