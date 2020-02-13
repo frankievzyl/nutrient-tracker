@@ -11,10 +11,10 @@
             $conn = Database::get_connection();
             $sql = "SELECT * FROM `user` WHERE `userPK` = " . $user_pk;
 			$result = $conn->query($sql);
-            $this->$tuple = $result->fetch_assoc();
+            $this->tuple = $result->fetch_assoc();
             /*perhaps this will work, but then shown_fields must become non-static
             $shown_fields = array_slice(array_keys($tuple), 1);*/
-            $this->$profile = new Nutrient_Profile($this->$tuple[`profilePK`]);
+            $this->profile = new Nutrient_Profile($this->tuple[`profilePK`]);
         }
 
         public static function get_all_keys() {
@@ -41,7 +41,7 @@
             
             $conn = Database::get_connection();
             $sql = "DELETE FROM `user` WHERE `userPK` = ?";
-            prepared_query($conn, $sql, $this->$tuple[`userPK`]);
+            prepared_query($conn, $sql, $this->tuple[`userPK`]);
         }
 
         public function update_tuple($post_data) {
@@ -54,7 +54,7 @@
             }
 
             $sql = "UPDATE `user` SET " . implode(",", $changes) . " WHERE `userPK` = ?";
-            prepared_query($conn, $sql, $this->$tuple[`userPK`]);
+            prepared_query($conn, $sql, $this->tuple[`userPK`]);
         }
     }
 ?>

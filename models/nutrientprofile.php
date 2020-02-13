@@ -9,7 +9,15 @@
             $conn = Database::get_connection();
             $sql = "SELECT * FROM `nutrientprofile` WHERE `profilePK` = ?";
 			$stmt = prepared_query($conn, $sql, $profile_pk);
-            $this->$tuple = $stmt->get_result()->fetch_assoc();
+            $this->tuple = $stmt->get_result()->fetch_assoc();
+        }
+
+        public static function get_all_profiles() {
+
+            $conn = Database::get_connection();
+            $sql = "SELECT * FROM `nutrientprofile`";
+			$result = $conn->query($sql);
+            return $result->fetch_all(MYSQLI_ASSOC);
         }
     }
 ?>

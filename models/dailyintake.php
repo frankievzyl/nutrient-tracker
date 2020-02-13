@@ -5,14 +5,14 @@
         public static $shown_fields = array('Date', 'Weight'); 
 
         public function __construct($intake_data) {
-            $this->$tuple = $intake_data;            
+            $this->tuple = $intake_data;            
         }
 
         public static function select_tuple($post_data) {
 
             $conn = Database::get_connection();
             $sql = "SELECT * FROM `dailyintake` WHERE `userPK` = ? AND `foodPK` = ?";
-			$stmt = prepared_query($conn, $sql, $post_data);
+			$stmt = prepared_query($conn, $sql, array_values($post_data));
             return $stmt->get_result()->fetch_assoc();
         }
 
@@ -77,14 +77,14 @@
             
             $conn = Database::get_connection();
             $sql = "DELETE FROM `dailyintake` WHERE `userPK` = ? AND `foodPK`= ? AND `Date` = ? AND `Weight` = ?";
-            prepared_query($conn, $sql, array_values($this->$tuple));
+            prepared_query($conn, $sql, array_values($this->tuple));
         }
 
         public function update_tuple($post_data) {
             
             $conn = Database::get_connection();
             $sql = "UPDATE `dailyintake` SET `Date` = ?, `Weight` = ? WHERE `userPK` = ? AND `foodPK` = ?";
-            prepared_query($conn, $sql, array($post_data['Date'], $post_data['Weight'], $this->$tuple['userPK'], $this->$tuple['foodPK']));
+            prepared_query($conn, $sql, array($post_data['Date'], $post_data['Weight'], $this->tuple['userPK'], $this->tuple['foodPK']));
         }
     }
 ?>

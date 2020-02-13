@@ -30,8 +30,19 @@
 			return self::$connection;
 		}
 
-		private static function escape_mysql_identifier($field){
+		public static function escape_mysql_identifier($field){
 			return "`".str_replace("`", "``", $field)."`";
+		}
+
+		private static function get_field_subset($table, $fields) {
+
+			$fields = array_map(self::escape_mysql_identifier(), $fields);
+			$fieldset = implode(",", $fields);
+			$table = self::escape_mysql_identifier($table);
+			self::get_connection();
+			$sql = "SELECT $fieldset FROM $table";
+			$result = self::$connection->query($sql);
+			return $result->fetch_all(MYSQLI_ASSOC);
 		}
 
 		//only to be used if users, not admins, are going to add foods. 
