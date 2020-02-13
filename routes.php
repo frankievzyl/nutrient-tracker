@@ -12,6 +12,9 @@
 			// we need the model to query the database later in the controller
 			require_once('models/post.php'); //again, inserting post models' code
 			$controller = new PostsController();
+				break;
+			default:
+			break;
 		}
 
 		// call the action

@@ -6,7 +6,7 @@
 
 		private function __clone() {}
 
-		public static function getConnection() {
+		public static function get_connection() {
 
 			$host = '127.0.0.1';
 			$db   = 'nutrient_tracker';
@@ -34,8 +34,9 @@
 			return "`".str_replace("`", "``", $field)."`";
 		}
 
-		public static function multiple_insert($table, $data) {
-			self::getConnection();
+		//only to be used if users, not admins, are going to add foods. 
+		/*public static function multiple_insert($table, $data) {
+			self::get_connection();
 			$keys = array_keys($data);
 			$keys = array_map('escape_mysql_identifier', $keys);
 			$fields = implode(",", $keys);
@@ -43,23 +44,12 @@
 			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
 			$sql = "INSERT INTO $table ($fields) VALUES ($placeholders)";
 			prepared_query(self::$connection, $sql, array_values($data));
-		}
+		}	*/	
 
-		public static function delete_pk($table, $conditions) {
-
-			self::getConnection();
-			$keys = array_keys($conditions);
-			$keys = array_map('escape_mysql_identifier', $keys);
-			$fields = implode(",", $keys);
-			$table = escape_mysql_identifier($table);
-			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
-            $sql = "DELETE FROM $table WHERE $fields = $placeholders";
-			prepared_query(self::$connection, $sql, array_values($conditions));
-		}
-
+		/* MAYBE NOT USE THIS, KEEP FOR NOW
 		public static function exec_prepared_statement($table, $data, $type, ...$conditions) {
 
-			self::getConnection();
+			self::get_connection();
 			$keys = array_keys($data);
 			$keys = array_map('escape_mysql_identifier', $keys);
 			$fields = implode(",", $keys);
@@ -73,15 +63,19 @@
 				case 'update':
 					
 					$changes = array();
+					$checks = array();
+
 					foreach ($data as $field => $value) {
-						$changes[] = escape_mysql_identifier($field) . "=" . $value;
+						$changes[] = escape_mysql_identifier($field) . " = ?";
 					}
-					$sets = implode(",", $changes);
-					foreach ($conditions as $type => $value) {
-						$similarities = array();
+					
+					foreach ($conditions as $field => $condition) {
+						$checks[] = escape_mysql_identifier($field) . " " . $condition;
 					}
-					$sql = "UPDATE $table SET " . $sets;
-					break;
+					$sql = "UPDATE $table SET " . implode(",", $changes) . " WHERE " . implode(",");
+
+					
+				break;
 				case 'delete':
 					$sql = "DELETE FROM $table WHERE $fields = $placeholders";
 					break;
@@ -91,7 +85,7 @@
 			}
 
 			prepared_query(self::$connection, $sql, array_values($data));
-		}
+		}*/
 		
 	}
 ?>
