@@ -18,16 +18,46 @@
 
     <p>Hello world! We are testing the food table</p>
     <p>The food model works, yay!</p><br>
-    <p>Now let's test the nutrientprofile model</p><br>
-    <p>Now let's test the user model</p><br>
-    <p>Now let's test the dailyintake model</p>
-    <p>get foods, display objects</p>
     <?php
-        $all_food = Food::get_food_like('apple');
-        foreach($all_food as $food) {
-            print_r(new Food($food));
-           
-        }
+        /*$food = Food::get_by_pk(3);
+        
+            print_r(new Food($food));*/
+        
+        
+        
+        
     ?>
+    <p>Now let's test the nutrientprofile model</p><br>
+    <p>nutrient model works!</p>
+    
+    <p>Now let's test the user model</p><br>
+    <p>user model works!</p>
+    
+    <p>Now let's test the dailyintake model</p>
+    <?php
+        
+       
+            $diary = User::get_all();
+            foreach ($diary as $intake) {
+                
+                $my_intake = new User($intake);
+                print_r($my_intake);
+
+                
+                
+            }
+        
+
+        
+        /*
+        }*/
+            
+        
+        
+            
+        
+    ?>
+    <p>get foods, display objects</p>
+    
 </body>
 </html>

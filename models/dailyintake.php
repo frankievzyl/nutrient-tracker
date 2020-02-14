@@ -1,18 +1,31 @@
 <?php
     class Daily_Intake {
 
-        public $tuple = array();
+        public $tuple = array('intakePK' => null, 'userPK'=> null, 'foodPK'=> null, 'Date'=> null, 'Weight' => null);
         public static $shown_fields = array('Date', 'Weight'); 
 
         public function __construct($intake_data) {
-            $this->tuple = $intake_data;            
+            $this->tuple = array_replace($this->tuple, $intake_data);           
         }
 
+        public static function get_all() {
+
+            return Database::get_all_core('dailyintake');
+        }
+
+        public static function get_by_pk($intake_pk) {
+
+            return Database::get_by_pk_core('dailyintake', 'intakePK', $intake_pk);
+        }
+
+        //obsolete
         public static function select_tuple($post_data) {
 
             $conn = Database::get_connection();
             $sql = "SELECT * FROM `dailyintake` WHERE `userPK` = ? AND `foodPK` = ?";
-			$stmt = prepared_query($conn, $sql, array_values($post_data));
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $food_pk);
+            $stmt->execute();
             return $stmt->get_result()->fetch_assoc();
         }
 
@@ -58,7 +71,10 @@
 
             $conn = Database::get_connection();
             $sql = "SELECT * FROM `dailyintake` WHERE `userPK` = ?" . $food_in . $date_conditions . $date_order;
-			$stmt = prepared_query($conn, $sql, $replacements_data);
+            echo($sql);
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(str_repeat("s", count($replacements_data)), ...array_values($replacements_data));
+            $stmt->execute();
             return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         }
 
@@ -70,21 +86,26 @@
 			$fields = implode(",", $keys);
 			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
 			$sql = "INSERT INTO `dailyintake` ($fields) VALUES ($placeholders)";
-            prepared_query($conn, $sql, array_values($post_data));
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param(str_repeat("s", count($post_data)), ...array_values($post_data));
+            if($stmt->execute()) {
+                return new Daily_Intake(self::get_by_pk($conn->insert_id));
+            }
+            return false;
         }
 
         public function delete_tuple() {
             
-            $conn = Database::get_connection();
-            $sql = "DELETE FROM `dailyintake` WHERE `userPK` = ? AND `foodPK`= ? AND `Date` = ? AND `Weight` = ?";
-            prepared_query($conn, $sql, array_values($this->tuple));
+            return Database::delete_tuple_core('dailyintake', 'intakePK', $this->tuple['intakePK']);
         }
 
         public function update_tuple($post_data) {
             
-            $conn = Database::get_connection();
-            $sql = "UPDATE `dailyintake` SET `Date` = ?, `Weight` = ? WHERE `userPK` = ? AND `foodPK` = ?";
-            prepared_query($conn, $sql, array($post_data['Date'], $post_data['Weight'], $this->tuple['userPK'], $this->tuple['foodPK']));
+            if(Database::update_tuple_core('dailyintake', 'intakePK', $this->tuple['intakePK'], $post_data)) {
+                $this->tuple = array_replace($this->tuple, $post_data);
+                return true;
+            }
+            return false;
         }
     }
 ?>

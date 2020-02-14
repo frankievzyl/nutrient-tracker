@@ -34,7 +34,7 @@
 			return "`".str_replace("`", "``", $field)."`";
 		}
 
-		private static function get_field_subset($table, $fields) {
+		public static function get_field_subset($table, $fields) { //works
 
 			$fields = array_map(self::escape_mysql_identifier(), $fields);
 			$fieldset = implode(",", $fields);
@@ -44,6 +44,49 @@
 			$result = self::$connection->query($sql);
 			return $result->fetch_all(MYSQLI_ASSOC);
 		}
+
+		public static function get_by_pk_core($table, $field, $pk) {//works
+
+			self::get_connection();
+            $sql = "SELECT * FROM $table WHERE $field = ?";
+			$stmt = self::$connection->prepare($sql);
+            $stmt->bind_param("i", $pk);
+            $stmt->execute();
+            return $stmt->get_result()->fetch_assoc();
+		}
+
+		public static function get_all_core($table) {//works
+
+            self::get_connection();
+            $sql = "SELECT * FROM $table";
+			$result = self::$connection->query($sql);
+            return $result->fetch_all(MYSQLI_ASSOC);
+		}
+		
+		public static function delete_tuple_core($table, $pk_field, $pk) {
+            
+            self::get_connection();
+            $sql = "DELETE FROM `$table` WHERE `$pk_field` = ?";
+            $stmt = self::$connection->prepare($sql);
+            $stmt->bind_param("i", $pk);
+            return $stmt->execute();
+		}
+		
+		public static function update_tuple_core($table, $pk_field, $pk, $post_data) {
+            
+            self::get_connection();
+            $changes = array();
+
+            foreach ($post_data as $field => $value) {
+                $changes[] = self::escape_mysql_identifier($field) . " = ?";
+            }
+
+			array_push($post_data, $pk);
+            $sql = "UPDATE `$table` SET " . implode(",", $changes) . " WHERE `$pk_field` = ?";
+            $stmt = self::$connection->prepare($sql);
+            $stmt->bind_param(str_repeat("s", count($post_data)), ...array_values($post_data));
+			return $stmt->execute();         
+        }
 
 		//only to be used if users, not admins, are going to add foods. 
 		/*public static function multiple_insert($table, $data) {
