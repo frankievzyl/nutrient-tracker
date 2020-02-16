@@ -34,7 +34,7 @@
 			return "`".str_replace("`", "``", $field)."`";
 		}
 
-		public static function get_field_subset($table, $fields) { //works
+		public static function get_field_subset($table, $fields) {
 
 			$fields = array_map(self::escape_mysql_identifier(), $fields);
 			$fieldset = implode(",", $fields);
@@ -45,7 +45,7 @@
 			return $result->fetch_all(MYSQLI_ASSOC);
 		}
 
-		public static function get_by_pk_core($table, $field, $pk) {//works
+		public static function get_by_pk_core($table, $field, $pk) {
 
 			self::get_connection();
             $sql = "SELECT * FROM $table WHERE $field = ?";
@@ -55,7 +55,7 @@
             return $stmt->get_result()->fetch_assoc();
 		}
 
-		public static function get_all_core($table) {//works
+		public static function get_all_core($table) {
 
             self::get_connection();
             $sql = "SELECT * FROM $table";
@@ -86,7 +86,9 @@
             $stmt = self::$connection->prepare($sql);
             $stmt->bind_param(str_repeat("s", count($post_data)), ...array_values($post_data));
 			return $stmt->execute();         
-        }
+		}
+		
+		//up to here works
 
 		//only to be used if users, not admins, are going to add foods. 
 		/*public static function multiple_insert($table, $data) {
@@ -98,48 +100,6 @@
 			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
 			$sql = "INSERT INTO $table ($fields) VALUES ($placeholders)";
 			prepared_query(self::$connection, $sql, array_values($data));
-		}	*/	
-
-		/* MAYBE NOT USE THIS, KEEP FOR NOW
-		public static function exec_prepared_statement($table, $data, $type, ...$conditions) {
-
-			self::get_connection();
-			$keys = array_keys($data);
-			$keys = array_map('escape_mysql_identifier', $keys);
-			$fields = implode(",", $keys);
-			$table = escape_mysql_identifier($table);
-			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
-			
-			switch ($type) {
-				case 'insert':
-					$sql = "INSERT INTO $table ($fields) VALUES ($placeholders)";
-					break;
-				case 'update':
-					
-					$changes = array();
-					$checks = array();
-
-					foreach ($data as $field => $value) {
-						$changes[] = escape_mysql_identifier($field) . " = ?";
-					}
-					
-					foreach ($conditions as $field => $condition) {
-						$checks[] = escape_mysql_identifier($field) . " " . $condition;
-					}
-					$sql = "UPDATE $table SET " . implode(",", $changes) . " WHERE " . implode(",");
-
-					
-				break;
-				case 'delete':
-					$sql = "DELETE FROM $table WHERE $fields = $placeholders";
-					break;
-				default:
-					# code...
-					break;
-			}
-
-			prepared_query(self::$connection, $sql, array_values($data));
-		}*/
-		
+		}	*/			
 	}
 ?>
