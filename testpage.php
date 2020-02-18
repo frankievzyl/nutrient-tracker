@@ -16,48 +16,16 @@
     require_once('models/post.php');
 ?>
 
-    <p>Hello world! We are testing the food table</p>
-    <p>The food model works, yay!</p><br>
+    <p>Hello world! We are testing.</p>
     <?php
-        /*$food = Food::get_by_pk(3);
-        
-            print_r(new Food($food));*/
-        
-        
-        
+    $profile = Nutrient_Profile::get_by_pk(7);
+    
+    
+        print_r(new Nutrient_Profile($profile));
+    
+    
         
     ?>
-    <p>Now let's test the nutrientprofile model</p><br>
-    <p>nutrient model works!</p>
-    
-    <p>Now let's test the user model</p><br>
-    <p>user model works!</p>
-    
-    <p>Now let's test the dailyintake model</p>
-    <?php
-        
-       
-            $diary = User::get_all();
-            foreach ($diary as $intake) {
-                
-                $my_intake = new User($intake);
-                print_r($my_intake);
-
-                
-                
-            }
-        
-
-        
-        /*
-        }*/
-            
-        
-        
-            
-        
-    ?>
-    <p>get foods, display objects</p>
     
 </body>
 </html>

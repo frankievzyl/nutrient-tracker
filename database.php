@@ -1,6 +1,6 @@
 <?php
 	class Database {
-		private static $connection = NULL;
+		private static $connection = null;
 
 		private function __construct() {}
 
@@ -45,6 +45,27 @@
 			return $result->fetch_all(MYSQLI_ASSOC);
 		}
 
+		public static function get_by_keys_core($table, $key_fields) {
+
+			$where_clause = array();
+
+			foreach ($key_fields as $key => $value) {
+				$where_clause[] = self::escape_mysql_identifier($key) . " = ?";
+			}
+
+			self::get_connection();
+            $sql = "SELECT * FROM `$table` WHERE " . implode(" AND ", $where_clause);
+			$stmt = self::$connection->prepare($sql);
+            $stmt->bind_param(str_repeat("s", count($key_fields)), ...array_values($key_fields));
+            $stmt->execute();
+			$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+			if(count($result) == 1) {
+				return $result[0];
+			}else {
+				return $result;
+			}
+		}
+
 		public static function get_by_pk_core($table, $field, $pk) {
 
 			self::get_connection();
@@ -55,51 +76,67 @@
             return $stmt->get_result()->fetch_assoc();
 		}
 
-		public static function get_all_core($table) {
+		public static function get_all_core($table) {//V
 
             self::get_connection();
-            $sql = "SELECT * FROM $table";
+            $sql = "SELECT * FROM `$table`";
 			$result = self::$connection->query($sql);
             return $result->fetch_all(MYSQLI_ASSOC);
 		}
 		
-		public static function delete_tuple_core($table, $pk_field, $pk) {
-            
-            self::get_connection();
-            $sql = "DELETE FROM `$table` WHERE `$pk_field` = ?";
+		public static function insert_tuple_core($table, $tuple_data) {
+
+			self::get_connection();
+			$keys = array_keys($tuple_data);
+			$keys = array_map(self::escape_mysql_identifier(), $keys);
+			$fields = implode(",", $keys);
+			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
+			$sql = "INSERT INTO `$table` ($fields) VALUES ($placeholders)";
             $stmt = self::$connection->prepare($sql);
-            $stmt->bind_param("i", $pk);
+            $stmt->bind_param(str_repeat("s", count($tuple_data)), ...array_values($tuple_data));
+			
+			if($stmt->execute()) {
+                return self::$connection->insert_id;
+            }
+            return false;
+		}
+
+		public static function delete_tuple_core($table, $key_fields) {
+			
+			$where_clause = array();
+
+			foreach ($key_fields as $key => $value) {
+				$where_clause[] = self::escape_mysql_identifier($key) . " = ?";
+			}
+
+            self::get_connection();
+            $sql = "DELETE FROM `$table` WHERE " . implode(" AND ", $where_clause);
+            $stmt = self::$connection->prepare($sql);
+            $stmt->bind_param(str_repeat("s", count($key_fields)), ...array_values($key_fields));
             return $stmt->execute();
 		}
 		
-		public static function update_tuple_core($table, $pk_field, $pk, $post_data) {
-            
-            self::get_connection();
-            $changes = array();
+		public static function update_tuple_core ($table, $key_fields, $post_data) {
+			
+			self::get_connection();
+			$changes = array();
+			$where_clause = array();
 
             foreach ($post_data as $field => $value) {
                 $changes[] = self::escape_mysql_identifier($field) . " = ?";
-            }
+			}
+			
+			foreach ($key_fields as $key => $value) {
+				$where_clause[] = self::escape_mysql_identifier($key) . " = ?";
+			}    
 
-			array_push($post_data, $pk);
-            $sql = "UPDATE `$table` SET " . implode(",", $changes) . " WHERE `$pk_field` = ?";
+			$all_data = array_merge($post_data, $key_fields);
+            $sql = "UPDATE `$table` SET " . implode(",", $changes) . " WHERE " . implode(" AND ", $where_clause);
             $stmt = self::$connection->prepare($sql);
-            $stmt->bind_param(str_repeat("s", count($post_data)), ...array_values($post_data));
-			return $stmt->execute();         
+            $stmt->bind_param(str_repeat("s", count($all_data)), ...array_values($all_data));
+			return $stmt->execute();      
 		}
 		
-		//up to here works
-
-		//only to be used if users, not admins, are going to add foods. 
-		/*public static function multiple_insert($table, $data) {
-			self::get_connection();
-			$keys = array_keys($data);
-			$keys = array_map('escape_mysql_identifier', $keys);
-			$fields = implode(",", $keys);
-			$table = escape_mysql_identifier($table);
-			$placeholders = str_repeat('?,', count($keys) - 1) . '?';
-			$sql = "INSERT INTO $table ($fields) VALUES ($placeholders)";
-			prepared_query(self::$connection, $sql, array_values($data));
-		}	*/			
+		//up to here works	
 	}
 ?>
