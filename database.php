@@ -1,7 +1,7 @@
 <?php
 	class Database {
 		private static $connection = null;
-
+		private static $limit = " LIMIT 40";
 		private function __construct() {}
 
 		private function __clone() {}
@@ -33,7 +33,7 @@
 		public static function do_select($sql, $types = null, ...$values){
 
 			self::get_connection();
-			$stmt = self::$connection->prepare($sql);
+			$stmt = self::$connection->prepare($sql.self::$limit);
 			
 			if($types && $values) {
 				$stmt->bind_param($types, ...$values);

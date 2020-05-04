@@ -1,0 +1,494 @@
+/*
+display: grid or inline-grid;
+columns & rows: grid-template-columns/rows
+gaps: grid-column/row-gap or grid-gap 
+lines: grid-column-start/end  or grid-row-start/end 
+align entire grid: justify-content
+align vertically: align-content
+
+*Items*
+SH(grid-column) line number / line number  or line-number / span #columns
+SH(grid-row) ~same as above
+
+grid-area: g-r-start, g-c-start, g-r-end, g-c-end
+Use this to rearrange grid items
+also use media queries to resize and rearrange items!
+
+using NAMES
+grid-area: name of grid-item
+grid-template-areas: 'grid-area-names . .'
+. = no name
+
+EXAMPLE
+
+.item1 { grid-area: header; }
+.item2 { grid-area: menu; }
+.item3 { grid-area: main; }
+.item4 { grid-area: right; }
+.item5 { grid-area: footer; }
+
+.grid-container {
+  grid-template-areas:
+    'header header header header header header'
+    'menu main main main right right'
+    'menu footer footer footer footer footer';
+} 
+*/
+
+/**/
+
+body {
+    --v-light-grey: rgb(220, 220, 220);
+    --v-dark-grey: rgb(160, 160, 160);
+    --v-med-grey: rgb(230, 230, 230);
+    --v-white-line: rgb(240,240,240);
+    --volcano-drop: 0.25rem -0.25rem 1rem var(--v-light-grey), inset -0.25rem 0.25rem 1rem var(--v-med-grey), inset 0.25rem -0.25rem 1rem var(--v-med-grey), -0.25rem 0.25rem 1rem var(--v-dark-grey);
+    --top-drop: 0px 0.25rem 1rem var(--v-med-grey);
+    --left-drop: -0.25rem 0px 1rem var(--v-med-grey);
+    --right-drop: 0.25rem 0px 1rem var(--v-med-grey);
+    --bottom-drop: 0px -0.25rem 1rem var(--v-med-grey);
+    --volcano-border: 1px solid rgb(240,240,240);
+    --main-shadow: -0.5rem 0.5rem 0.5rem rgb(100,100,100);
+    --main-bg: rgb(255, 255, 255);
+    --sec-bg: rgb(200, 200, 200);
+    --confirm-color: rgb(66, 205, 230);
+    --cancel-color: rgb(235, 77, 66);
+    --page-height: 90vh;
+    /*food type colours*/
+    --fruits: #f69; 
+    --vegetables: #0c6; 
+    --legumes: #669;; 
+    --grains: #fc6; 
+    --nuts: #f93; 
+    --seeds: #c69; 
+    --fats: #fc9; 
+    --herbs: #8c0; 
+    --anon: #99f; 
+    --spices: #c30; 
+    --water: #9ff; 
+    --alcohol:  #ccc; 
+    --coffee: #4d2600; 
+    --tea: #933; 
+    --food-tab-border-width: 3px;
+    
+    margin: 0;
+    padding: 0;
+    background-color: var(--main-bg);
+    font-family: 'verdana';
+    
+}
+
+td {
+    text-align: right;
+}
+
+td:first-child {
+    text-align: left;
+    max-width: 50px;
+    overflow: hidden;
+}
+
+button {
+    cursor: pointer;
+}
+
+.login-container {
+    display: grid;
+    grid-template-columns: auto 80vw auto;
+    grid-template-rows:  30vh auto 10vh auto;
+    align-content: center;
+    justify-content: center;
+}
+
+.log-in-form {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   justify-content: space-evenly;
+   grid-area: 2 / 2 / 3 / 3; 
+}
+
+.user-login-button, .album-btn, .menu-btn, .media-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--main-bg);
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.user-login-button > img{
+    width: 10rem;
+    height: 10rem; 
+}
+
+.user-login-button > span {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+#sign-up-link {
+    color: darkblue;
+    
+    width: max-content; 
+    justify-self: center;
+    grid-area: 4 / 2 / 5 / 3;
+}
+
+.cover {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   z-index: 10;
+   background-color: black;
+   opacity: 0.7;
+   display: none;
+}
+
+.popup-layer-1 {
+    position: absolute;
+    display: none;
+    justify-content: center;
+    z-index: 20;
+    width: 100%;
+    height: 100%;
+    align-items: center; 
+}
+
+.sign-up-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5rem;
+    border-radius: 1rem;
+    box-shadow: var(--main-shadow);
+    width: 10rem;
+    height: 15rem;
+    background-color: var(--main-bg);
+}
+
+input[type="text"] {
+    border-radius: 0.5rem;
+    border: none;
+    padding: 0.5rem;
+    border: 1px solid black;
+}
+
+.v-btn {
+    background-color: var(--main-bg);
+    border-radius: 1.5rem;
+    border: none;
+    box-shadow: var(--volcano-drop);
+    padding: 1rem;
+    font-weight: bold;
+    border: var(--volcano-border);
+    height: 3rem;
+}
+
+.confirm-btn {
+    color: var(--confirm-color);
+}
+
+.cancel-btn {
+    color: var(--cancel-color);
+}
+
+.hidden-form {
+    display: none;
+}
+
+header > .menu-item {
+    
+    height: 2rem;
+    text-decoration: underline;
+    text-align: center;
+    padding: 0.5rem 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+header {
+    background-color: var(--sec-bg);
+    display: grid;
+    grid-template-columns: 10% 10% 10% 10% auto 10%;
+    gap: 0 2rem;
+    height: 10vh;
+    align-content: center;
+    padding: 0px 2rem;
+}
+
+
+/*discoverfoods.php*/
+
+main.discoverfoods {
+    display: grid;
+    grid-template-columns: 23vw 7vw auto;
+    grid-template-rows: var(--page-height);
+}
+
+#food-filter {
+    background-color: yellow;
+}
+
+#food-filter > #hs-columns > .hs-column {
+    display: inline-block;
+    color: white;
+    opacity: 1;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.2rem;
+    border-width: 2px;
+    border-style: solid;
+    background-color: #ee82ee;
+    border-top-color: #ee8310;
+    border-bottom-color: #ee60cc;
+    border-right-color:#ee93ff;
+    border-left-color:#ee71dd;
+}
+
+#food-filter > #hs-columns > .tierA {
+    display: block;
+}
+/*
+#food-filter > #hs-columns > .tierB {
+    display: ;
+}
+
+#food-filter > #hs-columns > .tierC {
+    display: ;
+}
+
+#food-filter > #hs-columns > .tierD {
+    display: ;
+}*/
+
+#food-filter > #hs-columns > .col-btn-invisible {
+    background-color: #ffc0cb;
+    border-top-color: #ffe2ed;
+    border-bottom-color: #ff9ea9;
+    border-right-color: #ffd1dc;
+    border-left-color: #ffafba;
+    opacity: 0.7;
+}
+
+#food-types {
+    height: var(--page-height);
+    
+}
+
+#food-types > .type-tab {
+    height: calc(var(--page-height) / 14 - 2 * var(--food-tab-border-width));
+    border-width: var(--food-tab-border-width);
+    border-style: solid; 
+}
+
+#food-types > .type-tab > span {
+    font-size: 0.6rem;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: block;
+    position: relative;
+    top: 36%;
+}
+
+#food-types > .fruits {
+    background-color: var(--fruits);
+    border-top-color: #f8b;
+    border-bottom-color: #f47;
+    border-right-color: #f7a;
+    border-left-color: #f58;
+}
+
+#food-types > .vegetables {
+    background-color: var(--vegetables);
+    border-top-color: #0e8;
+    border-bottom-color: #0a4;
+    border-right-color: #0d7;
+    border-left-color: #0b5;
+}
+#food-types > .legumes {
+    background-color: var(--legumes);
+    border-top-color: #68b;
+    border-bottom-color: #647;
+    border-right-color: #67a;
+    border-left-color: #658;
+}
+#food-types > .grains {
+    background-color: var(--grains);
+    border-top-color: #fe8;
+    border-bottom-color: #fa4;
+    border-right-color: #fd7;
+    border-left-color: #fb5;
+}
+#food-types > .nuts {
+    background-color: var(--nuts);
+    border-top-color:#fb5;
+    border-bottom-color:#f71;
+    border-right-color:#fa4;
+    border-left-color:#f82;
+}
+#food-types > .seeds {
+    background-color: var(--seeds);
+    border-top-color:#c8b;
+    border-bottom-color:#c47;
+    border-right-color:#c7a;
+    border-left-color:#c58;
+}
+#food-types > .fats {
+    background-color: var(--fats);
+    border-top-color:#feb;
+    border-bottom-color:#fa7;
+    border-right-color:#fda;
+    border-left-color:#fb8;
+}
+#food-types > .herbs {
+    background-color: var(--herbs);
+    border-top-color:#8e2;
+    border-bottom-color:#89e;
+    border-right-color:#8d1;
+    border-left-color:#8af;
+}
+#food-types > .anonymous {
+    background-color: var(--anon);
+    border-top-color:#9c1;
+    border-bottom-color:#97d;
+    border-right-color:#9b0;
+    border-left-color:#98e;
+}
+#food-types > .spices {
+    background-color: var(--spices);
+    border-top-color:#c52;
+    border-bottom-color:#c0e;
+    border-right-color:#c41;
+    border-left-color:#c1f;
+}
+#food-types > .water {
+    background-color: var(--water);
+    border-top-color:#a21;
+    border-bottom-color:#9dd;
+    border-right-color:#a10;
+    border-left-color:#9ee;
+}
+#food-types > .alcohol {
+    background-color: var(--alcohol);
+    border-top-color:#cff;
+    border-bottom-color:#caa;
+    border-right-color:#cdd;
+    border-left-color:#cbb;
+}
+#food-types > .coffee {
+    background-color: var(--coffee);
+    border-top-color:#4d4822;
+    border-bottom-color:#4d03de;
+    border-right-color:#4d3711;
+    border-left-color:#4d14ef;
+}
+#food-types > .tea {
+    background-color: var(--tea);
+    border-top-color:#955;
+    border-bottom-color:#911;
+    border-right-color:#944;
+    border-left-color:#922;
+}
+
+#table-display {
+    overflow-x: scroll;
+}
+
+.row:nth-child(even) {
+    background-color: lightblue;
+}
+
+.row {
+    width: max-content;
+    display: flex;
+}
+
+.cell {
+    width: 10rem;
+    height: 1.5rem;
+    display: inline-block;
+    font-size: 1rem;
+    padding: 1px 2px;
+    text-align: center;
+}
+
+.header {
+    width: max-content;
+    position: sticky;
+    top: 0;
+    background-color: whitesmoke;
+}
+
+.header > .cell{
+    
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.food > .cell{
+    height: 5rem;
+}
+
+.food > .name {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 1.8rem 1rem 1.1rem 1.1rem;
+}
+
+.food > .name > span {
+    display: block;
+}
+
+.food > .name > .title{
+    text-align: left;
+    font-size: 0.8rem;
+    overflow: hidden;
+}
+
+.food > .name > .subtitle {
+    font-size: 0.5rem;
+}
+
+.percent-of-day {
+
+}
+
+.percent-of-day > .gradient {
+
+}
+
+.percent-of-day > .numbers{
+
+}
+
+.percent-of-day > .numbers > .grams {
+
+}
+
+.percent-of-day > .numbers > .percent {
+    
+}
+
+.food > .name > .score {
+
+}
+
+.food.fruits > .name > .title {background-color: var(--fruits);}
+.food.vegetables > .name > .title {background-color: var(--vegetables);}
+.food.legumes > .name > .title {background-color: var(--legumes);}
+.food.grains > .name > .title {background-color: var(--grains);}
+.food.nuts > .name > .title {background-color: var(--nuts);}
+.food.seeds > .name > .title {background-color: var(--seeds);}
+.food.fats > .name > .title {background-color: var(--fats);}
+.food.herbs > .name > .title {background-color: var(--herbs);}
+.food.anonymous > .name > .title {background-color: var(--anon);}
+.food.spices > .name > .title {background-color: var(--spices);}
+.food.water > .name > .title {background-color: var(--water);}
+.food.alcohol > .name > .title {background-color: var(--alcohol);}
+.food.coffee > .name > .title {background-color: var(--coffee);}
+.food.tea > .name > .title {background-color: var(--tea);}
+

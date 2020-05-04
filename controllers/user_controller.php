@@ -47,7 +47,7 @@
                 }
             }
             
-            $url = "location: ?action=get_all&controller=album&userPK=" . self::$this_user->data["userPK"];
+            $url = "location: ?action=get_all&controller=logbook&userPK=" . self::$this_user->data["userPK"];
             header($url);
             
         }
@@ -57,7 +57,7 @@
             if ($new_user = User::insert($_GET)) {
                 
                 self::$this_user = serialize($new_user);
-                header("location: ?action=get_all&controller=album&userPK={$new_user->data['userPK']}");
+                header("location: ?action=get_all&controller=logbook&userPK={$new_user->data['userPK']}");
 
             } else {
 
@@ -66,7 +66,7 @@
             
         }
 
-        public function show_settings() {
+        public function profile() {
 
             require_once("views/editprofile.php");
         }

@@ -20,6 +20,8 @@
 				require_once('models/userprofilehistory.php');
 				$controller = new UserProfileHistory_Controller();
 				break;
+			case 'pages':
+				$controller = new Pages_Controller();
 			default:
 			break;
 		}
@@ -32,8 +34,9 @@
   // we consider those "allowed" values
 
 	$controllers = array('logbook' => ['get_entries_by_date', 'get_entries_in_date_range', 'add_entry', 'update_entry', 'delete_entry'],
-						 'food' => ['get_all', 'get_by_name', 'get_by_type', 'get_by_pk', 'order_by'],
-						 'user' => ['get_all', 'get_by_pk', 'log_in_user', 'sign_up', 'delete_user', 'get_macros', 'enter_macro', 'update_macro', 'get_nutrient_profile', 'set_nutrient_profile']);
+						 'food' => ['get_all', 'get_by_name', 'get_by_type', 'get_by_pk', 'get_by_nutrients'],
+						 'user' => ['get_all', 'get_user', 'log_in_user', 'sign_up', 'delete_user', 'get_macros', 'enter_macro', 'update_macro', 'get_nutrient_profile', 'set_nutrient_profile', 'profile'],
+						'pages' => ['error', 'view_foods', 'log_foods', 'view_logbook', 'edit_profile', 'sign_up', 'log_in']);
 
   	if (array_key_exists($controller, $controllers)) {
   		if (in_array($action, $controllers[$controller])) {
